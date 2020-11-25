@@ -1,0 +1,162 @@
+Create table login(
+id_login serial not null,
+usuario VARCHAR(10) not null,
+clave VARCHAR(25) not null,
+PRIMARY KEY(id_login));
+
+Create table empresas(
+id_empresa serial not null,
+nombre_empresa VARCHAR(50) not null,
+nit numeric(15) not null,
+numero_verificacion INT not null,
+representante VARCHAR(50), 
+direccion VARCHAR(80),
+email VARCHAR(80) not null,
+telefono numeric(10) not null,
+cantidad_empleados INT,
+PRIMARY KEY(id_empresa));
+
+Create table empresas_logins(
+id_empresa_login serial not null,
+id_empresa int not null,
+id_login int not null,
+fecha_creacion datetime not null,
+fecha_retiro datetime not null,
+estado INT not null,
+PRIMARY KEY(id_empresa_login));
+
+Create table tipos_documentos(
+id_tipo_documento serial not null,
+descripcion VARCHAR(15) not null,
+PRIMARY KEY(id_tipo_documento));
+
+Create table departamentos(
+id_departamento serial not null,
+nombre VARCHAR(50) not null,
+PRIMARY KEY(id_departamento));
+
+Create table ciudades(
+id_ciudad serial not null,
+id_departamento int not null,
+nombre varchar(20) not null,
+PRIMARY KEY(id_ciudad));
+
+Create table historicos_decretos(
+id_historico serial not null,
+fecha_decreto DATE not null,
+descripcion VARCHAR(1000) not null,
+url VARCHAR(500) not null,
+id_decreto int not null,
+id_ciudad int not null,
+PRIMARY KEY(id_historico));
+
+Create table decretos(
+id_decreto BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+numero_decreto VARCHAR(10) not null,
+descripcion VARCHAR(500),
+PRIMARY KEY(id_decreto));
+
+Create table personas(
+id_persona serial not null,
+tipo_documento int not null,
+documento VARCHAR(15) not null,
+primer_apellido VARCHAR(20) not null,
+segundo_apellido VARCHAR(20) not null,
+primer_nombre VARCHAR(20) not null,
+segundo_nombre VARCHAR(20) not null,
+fecha_nacimiento DATE not null,
+lugar_nacimiento int not null,
+estatura int,
+grupo_sanguineo varchar(3),
+genero SMALLINT not null,
+peso int,
+telefono numeric(12) not null,
+email VARCHAR(100) not null,
+PRIMARY KEY(id_persona));
+
+Create table enfermedades(
+id_enfermedad serial not null,
+descripcion VARCHAR(20) not null,
+PRIMARY KEY(id_enfermedad));
+
+Create table registros(
+id_registro serial not null,
+id_persona int not null,
+id_empresa int not null,
+id_enfermedad int not null,
+fecha_ingreso datetime not null,
+fecha_salida datetime not null,
+temperatura int not null,
+sintomas boolean,
+ingreso boolean,
+PRIMARY KEY(id_registro));
+
+Alter table ciudades
+Add constraint FK_CIUDAD_idDepartamento
+Foreign key (id_departamento )
+References departamentos(id_departamento )
+ON UPDATE CASCADE 
+ON DELETE RESTRICT;
+
+Alter table empresas_logins
+Add constraint FK_EMPRESALOGIN_idEmpresa 
+Foreign key (id_empresa )
+References empresas(id_empresa )
+ON UPDATE CASCADE 
+ON DELETE RESTRICT;
+
+Alter table empresas_logins
+Add constraint FK_EMPRESALOGIN_idLogin
+Foreign key (id_login )
+References login(id_login )
+ON UPDATE CASCADE 
+ON DELETE RESTRICT;
+
+Alter table registros
+Add constraint FK_REGISTRO_idEmpresa
+Foreign key (id_empresa )
+References empresas(id_empresa )
+ON UPDATE CASCADE 
+ON DELETE RESTRICT;
+
+Alter table registros
+Add constraint FK_REGISTRO_idPersona
+Foreign key (id_persona )
+References personas(id_persona )
+ON UPDATE CASCADE 
+ON DELETE RESTRICT;
+
+Alter table registros
+Add constraint FK_REGISTRO_idEnfermedad
+Foreign key (id_enfermedad )
+References enfermedades (id_enfermedad )
+ON UPDATE CASCADE 
+ON DELETE RESTRICT;
+
+Alter table personas 
+Add constraint FK_DECRETOS_idTipoDocumento
+Foreign key (id_tipo_documento )
+References tipos_documentos (id_tipo_documento )
+ON UPDATE CASCADE 
+ON DELETE RESTRICT;
+
+Alter table Persona
+Add constraint FK_DECRETOS_idCiudad
+Foreign key (lugar_nacimiento)
+References ciudades (id_ciudad )
+ON UPDATE CASCADE 
+ON DELETE RESTRICT;
+
+Alter table historicos_decretos 
+Add constraint FK_HISTORICODECRETO_idCiudad
+Foreign key (id_ciudad )
+References ciudades (id_ciudad )
+ON UPDATE CASCADE 
+ON DELETE RESTRICT;
+
+Alter table historicos_decretos 
+Add constraint FK_HISTORICODECRETO_idCiudad
+Foreign key (id_decreto) 
+References decretos (id_decreto)
+ON UPDATE CASCADE 
+ON DELETE RESTRICT;
